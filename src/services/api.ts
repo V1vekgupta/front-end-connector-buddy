@@ -1,4 +1,3 @@
-
 import { Restaurant, MenuItem, Order, CreateOrderRequest, QRCode, RestaurantStats } from '../types';
 
 const API_BASE_URL = 'http://localhost:8080/api';
@@ -125,6 +124,65 @@ export const analyticsService = {
     apiRequest(`/analytics/restaurants/${restaurantId}/popular-items`),
 };
 
+// Authentication API
+export const authService = {
+  requestAccess: (data: {
+    fullName: string;
+    email: string;
+    restaurantName: string;
+    phoneNumber: string;
+    businessType: string;
+    message: string;
+  }): Promise<{ message: string; requestId: string }> => 
+    apiRequest('/auth/request-access', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...data,
+        adminEmail: 'vivekgupta1582003@gmail.com'
+      }),
+    }),
+    
+  checkAccessStatus: (email: string): Promise<{ 
+    status: 'pending' | 'approved' | 'rejected';
+    message?: string;
+  }> => 
+    apiRequest(`/auth/access-status?email=${encodeURIComponent(email)}`),
+    
+  login: (credentials: {
+    email: string;
+    password: string;
+  }): Promise<{
+    token: string;
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      restaurantName: string;
+    };
+  }> => 
+    apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }),
+    
+  approveAccess: (requestId: string, adminToken: string): Promise<{ message: string }> => 
+    apiRequest(`/auth/approve-access/${requestId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${adminToken}`,
+      },
+    }),
+    
+  rejectAccess: (requestId: string, adminToken: string, reason?: string): Promise<{ message: string }> => 
+    apiRequest(`/auth/reject-access/${requestId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${adminToken}`,
+      },
+      body: JSON.stringify({ reason }),
+    }),
+};
+
 // Export all services
 export default {
   restaurant: restaurantService,
@@ -132,4 +190,5 @@ export default {
   order: orderService,
   qrCode: qrCodeService,
   analytics: analyticsService,
+  auth: authService,
 };

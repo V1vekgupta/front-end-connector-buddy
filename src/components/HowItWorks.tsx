@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { QrCode, Smartphone, ShoppingBag, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
   {
@@ -34,6 +34,12 @@ const steps = [
 ];
 
 const HowItWorks = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/login');
+  };
+
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -66,7 +72,10 @@ const HowItWorks = () => {
             Join hundreds of restaurants already using Smart Order to enhance their customer experience 
             and streamline operations.
           </p>
-          <button className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={handleGetStarted}
+            className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+          >
             Get Started Today
           </button>
         </div>

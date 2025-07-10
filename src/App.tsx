@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import MenuPage from "./pages/MenuPage";
 import CartPage from "./pages/CartPage";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import LoginPage from "./pages/LoginPage";
 import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
         <CartProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/menu/:restaurantId" element={<MenuPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
