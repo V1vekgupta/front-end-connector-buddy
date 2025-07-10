@@ -1,4 +1,6 @@
 
+import { Restaurant, MenuItem, Order, CreateOrderRequest, QRCode, RestaurantStats } from '../types';
+
 const API_BASE_URL = 'http://localhost:8080/api';
 
 // Generic API request function
@@ -30,45 +32,45 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 
 // Restaurant API
 export const restaurantService = {
-  getAll: () => apiRequest('/restaurants'),
-  getById: (id: string) => apiRequest(`/restaurants/${id}`),
-  create: (data: any) => apiRequest('/restaurants', {
+  getAll: (): Promise<Restaurant[]> => apiRequest('/restaurants'),
+  getById: (id: string): Promise<Restaurant> => apiRequest(`/restaurants/${id}`),
+  create: (data: any): Promise<Restaurant> => apiRequest('/restaurants', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  update: (id: string, data: any) => apiRequest(`/restaurants/${id}`, {
+  update: (id: string, data: any): Promise<Restaurant> => apiRequest(`/restaurants/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  delete: (id: string) => apiRequest(`/restaurants/${id}`, {
+  delete: (id: string): Promise<void> => apiRequest(`/restaurants/${id}`, {
     method: 'DELETE',
   }),
 };
 
 // Menu API
 export const menuService = {
-  getRestaurant: (restaurantId: string) => 
+  getRestaurant: (restaurantId: string): Promise<Restaurant> => 
     apiRequest(`/restaurants/${restaurantId}`),
     
-  getMenuItems: (restaurantId: string) => 
+  getMenuItems: (restaurantId: string): Promise<MenuItem[]> => 
     apiRequest(`/restaurants/${restaurantId}/menu-items`),
     
-  getMenuItem: (restaurantId: string, itemId: string) => 
+  getMenuItem: (restaurantId: string, itemId: string): Promise<MenuItem> => 
     apiRequest(`/restaurants/${restaurantId}/menu-items/${itemId}`),
     
-  createMenuItem: (restaurantId: string, data: any) => 
+  createMenuItem: (restaurantId: string, data: any): Promise<MenuItem> => 
     apiRequest(`/restaurants/${restaurantId}/menu-items`, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
     
-  updateMenuItem: (restaurantId: string, itemId: string, data: any) => 
+  updateMenuItem: (restaurantId: string, itemId: string, data: any): Promise<MenuItem> => 
     apiRequest(`/restaurants/${restaurantId}/menu-items/${itemId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
     
-  deleteMenuItem: (restaurantId: string, itemId: string) => 
+  deleteMenuItem: (restaurantId: string, itemId: string): Promise<void> => 
     apiRequest(`/restaurants/${restaurantId}/menu-items/${itemId}`, {
       method: 'DELETE',
     }),
@@ -76,42 +78,42 @@ export const menuService = {
 
 // Order API
 export const orderService = {
-  createOrder: (data: any) => apiRequest('/orders', {
+  createOrder: (data: CreateOrderRequest): Promise<Order> => apiRequest('/orders', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
   
-  getOrder: (orderId: string) => apiRequest(`/orders/${orderId}`),
+  getOrder: (orderId: string): Promise<Order> => apiRequest(`/orders/${orderId}`),
   
-  updateOrderStatus: (orderId: string, status: string) => 
+  updateOrderStatus: (orderId: string, status: string): Promise<Order> => 
     apiRequest(`/orders/${orderId}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     }),
     
-  getOrdersByRestaurant: (restaurantId: string) => 
+  getOrdersByRestaurant: (restaurantId: string): Promise<Order[]> => 
     apiRequest(`/restaurants/${restaurantId}/orders`),
     
-  getAllOrders: () => apiRequest('/orders'),
+  getAllOrders: (): Promise<Order[]> => apiRequest('/orders'),
 };
 
 // QR Code API
 export const qrCodeService = {
-  generateQR: (restaurantId: string, tableNumber?: string) => 
+  generateQR: (restaurantId: string, tableNumber?: string): Promise<QRCode> => 
     apiRequest('/qr-codes/generate', {
       method: 'POST',
       body: JSON.stringify({ restaurantId, tableNumber }),
     }),
     
-  getQRInfo: (qrId: string) => apiRequest(`/qr-codes/${qrId}`),
+  getQRInfo: (qrId: string): Promise<QRCode> => apiRequest(`/qr-codes/${qrId}`),
 };
 
 // Analytics API
 export const analyticsService = {
-  getRestaurantStats: (restaurantId: string) => 
+  getRestaurantStats: (restaurantId: string): Promise<RestaurantStats> => 
     apiRequest(`/analytics/restaurants/${restaurantId}`),
     
-  getOrderStats: (restaurantId: string, startDate?: string, endDate?: string) => {
+  getOrderStats: (restaurantId: string, startDate?: string, endDate?: string): Promise<any> => {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
@@ -119,7 +121,7 @@ export const analyticsService = {
     return apiRequest(`/analytics/restaurants/${restaurantId}/orders?${params.toString()}`);
   },
   
-  getPopularItems: (restaurantId: string) => 
+  getPopularItems: (restaurantId: string): Promise<any> => 
     apiRequest(`/analytics/restaurants/${restaurantId}/popular-items`),
 };
 

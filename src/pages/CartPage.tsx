@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { orderService } from '../services/api';
+import { CreateOrderRequest } from '../types';
 
 const CartPage = () => {
   const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
@@ -26,15 +27,18 @@ const CartPage = () => {
     
     setLoading(true);
     try {
-      const orderData = {
+      const orderData: CreateOrderRequest = {
+        restaurantId: cartItems[0]?.restaurantId || 'default-restaurant',
         items: cartItems.map(item => ({
           menuItemId: item.id,
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
+          specialRequests: ''
         })),
         customerInfo,
         totalAmount: grandTotal,
-        status: 'PENDING'
+        tableNumber: customerInfo.tableNumber,
+        specialRequests: customerInfo.specialRequests
       };
 
       const order = await orderService.createOrder(orderData);
