@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShoppingCart, Menu as MenuIcon } from 'lucide-react';
+import { ShoppingCart, Menu as MenuIcon, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
@@ -26,6 +26,14 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-4">
+          <Link 
+            to="/login" 
+            className="hidden md:flex items-center space-x-2 px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            <LogIn className="w-4 h-4" />
+            <span>Login</span>
+          </Link>
+          
           <Link to="/cart" className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors">
             <ShoppingCart className="w-6 h-6" />
             {itemCount > 0 && (
