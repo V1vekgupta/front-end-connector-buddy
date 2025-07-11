@@ -147,11 +147,24 @@ export const authService = {
     message?: string;
   }> => 
     apiRequest(`/auth/access-status?email=${encodeURIComponent(email)}`),
-    
-  login: (credentials: {
+
+  verifyAccess: (email: string): Promise<{
+    hasAccess: boolean;
+    isFirstLogin: boolean;
+    userId?: string;
+    message?: string;
+  }> => 
+    apiRequest('/auth/verify-access', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  createPassword: (data: {
     email: string;
     password: string;
+    confirmPassword: string;
   }): Promise<{
+    success: boolean;
     token: string;
     user: {
       id: string;
@@ -159,6 +172,26 @@ export const authService = {
       name: string;
       restaurantName: string;
     };
+    message?: string;
+  }> => 
+    apiRequest('/auth/create-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    
+  login: (credentials: {
+    email: string;
+    password: string;
+  }): Promise<{
+    success: boolean;
+    token: string;
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      restaurantName: string;
+    };
+    message?: string;
   }> => 
     apiRequest('/auth/login', {
       method: 'POST',

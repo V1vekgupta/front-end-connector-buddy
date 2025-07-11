@@ -1,4 +1,3 @@
-
 // Restaurant Types
 export interface Restaurant {
   id: string;
@@ -201,4 +200,30 @@ export interface FilterOptions {
 export interface SortOptions {
   field: 'name' | 'price' | 'category' | 'createdAt';
   direction: 'asc' | 'desc';
+}
+
+// Authentication Types (updated)
+export interface AccessVerificationResponse {
+  hasAccess: boolean;
+  isFirstLogin: boolean;
+  userId?: string;
+  message?: string;
+}
+
+export interface CreatePasswordRequest {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    restaurantName: string;
+  };
+  message?: string;
 }
