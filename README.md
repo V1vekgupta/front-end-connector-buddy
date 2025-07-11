@@ -10,6 +10,9 @@ A modern, responsive frontend application for QR code-based restaurant ordering,
 - **Smart Cart Management**: Add, remove, and modify items with real-time updates
 - **Order Management**: Place orders with customer information and special requests
 - **Order Tracking**: Real-time order status updates and confirmation
+- **Restaurant Authentication**: Secure access control for restaurant owners
+- **Password Management**: First-time password creation and login system
+- **Access Request System**: Request access flow for new restaurant partners
 - **Responsive Design**: Optimized for mobile, tablet, and desktop devices
 - **Professional UI**: Clean, modern interface matching restaurant industry standards
 
@@ -82,10 +85,25 @@ This frontend is designed to work with the following Spring Boot API endpoints:
 - `GET /api/orders/{orderId}` - Get order details
 - `PUT /api/orders/{orderId}/status` - Update order status
 - `GET /api/restaurants/{restaurantId}/orders` - Get restaurant orders
+- `GET /api/orders` - Get all orders
 
 ### QR Code Endpoints
 - `POST /api/qr-codes/generate` - Generate QR code
 - `GET /api/qr-codes/{qrId}` - Get QR code information
+
+### Authentication Endpoints
+- `POST /api/auth/request-access` - Request access for new restaurant partners
+- `GET /api/auth/access-status?email={email}` - Check access request status
+- `POST /api/auth/verify-access` - Verify if user has granted access
+- `POST /api/auth/create-password` - Create password for first-time login
+- `POST /api/auth/login` - Login with email and password
+- `POST /api/auth/approve-access/{requestId}` - Approve access request (admin)
+- `POST /api/auth/reject-access/{requestId}` - Reject access request (admin)
+
+### Analytics Endpoints
+- `GET /api/analytics/restaurants/{restaurantId}` - Get restaurant statistics
+- `GET /api/analytics/restaurants/{restaurantId}/orders` - Get order analytics
+- `GET /api/analytics/restaurants/{restaurantId}/popular-items` - Get popular items
 
 ## 📁 Project Structure
 
@@ -98,6 +116,7 @@ src/
 │   └── Footer.tsx      # Site footer
 ├── pages/              # Page components
 │   ├── Index.tsx       # Landing page
+│   ├── LoginPage.tsx   # Authentication and access request
 │   ├── MenuPage.tsx    # Restaurant menu display
 │   ├── CartPage.tsx    # Shopping cart and checkout
 │   └── OrderConfirmation.tsx # Order success page
@@ -135,6 +154,23 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 - **Order Service**: Order creation and tracking
 - **QR Code Service**: QR code generation and management
 - **Analytics Service**: Business intelligence data
+- **Authentication Service**: Access control and user management
+
+## 🔐 Authentication Flow
+
+### New Restaurant Partner Flow
+1. **Access Request**: Restaurant owner fills out access request form
+2. **Admin Review**: Admin receives email notification and reviews request
+3. **Access Approval**: Admin approves or rejects the request
+4. **First Login**: Approved user creates a strong password
+5. **Subsequent Logins**: User logs in with email and password
+
+### API Integration Details
+- **Request Access**: POST to `/api/auth/request-access` with restaurant details
+- **Status Check**: GET `/api/auth/access-status` to check approval status
+- **Access Verification**: POST `/api/auth/verify-access` to verify granted access
+- **Password Creation**: POST `/api/auth/create-password` for first-time setup
+- **Login**: POST `/api/auth/login` for returning users
 
 ## 🎨 Styling & Design
 
@@ -167,10 +203,12 @@ The application uses a custom Tailwind configuration with:
 
 ### Restaurant Management
 
-1. **Menu Management**: Add, edit, and remove menu items
-2. **Order Processing**: Receive and update order status
-3. **QR Code Generation**: Create QR codes for tables
-4. **Analytics**: View sales data and popular items
+1. **Access Request**: Submit request with restaurant details
+2. **Password Setup**: Create secure password after approval
+3. **Menu Management**: Add, edit, and remove menu items
+4. **Order Processing**: Receive and update order status
+5. **QR Code Generation**: Create QR codes for tables
+6. **Analytics**: View sales data and popular items
 
 ## 🚀 Production Deployment
 
@@ -221,6 +259,7 @@ npm run test:e2e
 - **API Security**: Proper error handling without exposing internals
 - **Content Security Policy**: Configured for production builds
 - **HTTPS Only**: All API calls use secure connections
+- **Access Control**: Secure authentication flow for restaurant partners
 
 ## 🐛 Troubleshooting
 
@@ -231,12 +270,17 @@ npm run test:e2e
    - Check CORS configuration in Spring Boot
    - Ensure database is accessible
 
-2. **Build Errors**
+2. **Authentication Issues**
+   - Verify email is approved for access
+   - Check password requirements for first-time setup
+   - Ensure backend authentication endpoints are working
+
+3. **Build Errors**
    - Clear node_modules and reinstall
    - Check for TypeScript errors
    - Update dependencies if needed
 
-3. **Styling Issues**
+4. **Styling Issues**
    - Verify Tailwind CSS is properly configured
    - Check for conflicting CSS rules
    - Clear browser cache
