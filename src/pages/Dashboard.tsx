@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,10 @@ import {
   TrendingUp, 
   Clock,
   Eye,
-  AlertCircle
+  AlertCircle,
+  Clipboard,
+  Utensils,
+  QrCode
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { analyticsService, orderService } from '../services/api';
@@ -173,13 +175,13 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link to="/dashboard/orders">
               <Button className="w-full" variant="outline">
-                <ClipboardList className="h-4 w-4 mr-2" />
+                <Clipboard className="h-4 w-4 mr-2" />
                 Manage Orders
               </Button>
             </Link>
             <Link to="/dashboard/menu">
               <Button className="w-full" variant="outline">
-                <UtensilsCrossed className="h-4 w-4 mr-2" />
+                <Utensils className="h-4 w-4 mr-2" />
                 Update Menu
               </Button>
             </Link>
