@@ -1,6 +1,18 @@
-import { Restaurant, MenuItem, Order, CreateOrderRequest, QRCode, RestaurantStats } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+import { 
+  Restaurant, 
+  MenuItem, 
+  Order, 
+  CreateOrderRequest, 
+  QRCode, 
+  RestaurantStats,
+  AccessVerificationResponse,
+  CreatePasswordRequest,
+  LoginResponse 
+} from '../types';
+
+// CORRECTED: The backend is running on port 8081
+const API_BASE_URL = 'http://localhost:8081/api';
 
 // Generic API request function
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -9,6 +21,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
   const config: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
+      // We can add the auth token here for secured endpoints later
       ...options.headers,
     },
     ...options,
@@ -17,12 +30,16 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
   try {
     const response = await fetch(url, config);
     
+    // Better error handling to parse JSON error messages from the backend
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     
-    const data = await response.json();
-    return data;
+    // Handle cases where the response might be empty (e.g., for a 204 No Content response)
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+
   } catch (error) {
     console.error(`API request failed: ${endpoint}`, error);
     throw error;
@@ -124,95 +141,18 @@ export const analyticsService = {
     apiRequest(`/analytics/restaurants/${restaurantId}/popular-items`),
 };
 
-// Authentication API
+// Authentication API (Simplified)
 export const authService = {
-  requestAccess: (data: {
-    fullName: string;
-    email: string;
-    restaurantName: string;
-    phoneNumber: string;
-    businessType: string;
-    message: string;
-  }): Promise<{ message: string; requestId: string }> => 
-    apiRequest('/auth/request-access', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...data,
-        adminEmail: 'vivekgupta1582003@gmail.com'
-      }),
-    }),
-    
-  checkAccessStatus: (email: string): Promise<{ 
-    status: 'pending' | 'approved' | 'rejected';
-    message?: string;
-  }> => 
-    apiRequest(`/auth/access-status?email=${encodeURIComponent(email)}`),
-
-  verifyAccess: (email: string): Promise<{
-    hasAccess: boolean;
-    isFirstLogin: boolean;
-    userId?: string;
-    message?: string;
-  }> => 
-    apiRequest('/auth/verify-access', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    }),
-
-  createPassword: (data: {
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }): Promise<{
-    success: boolean;
-    token: string;
-    user: {
-      id: string;
-      email: string;
-      name: string;
-      restaurantName: string;
-    };
-    message?: string;
-  }> => 
-    apiRequest('/auth/create-password', {
+  signUp: (data: any): Promise<{ message: string }> => 
+    apiRequest('/auth/signup', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
     
-  login: (credentials: {
-    email: string;
-    password: string;
-  }): Promise<{
-    success: boolean;
-    token: string;
-    user: {
-      id: string;
-      email: string;
-      name: string;
-      restaurantName: string;
-    };
-    message?: string;
-  }> => 
+  login: (credentials: { email: string; password: string; }): Promise<LoginResponse> => 
     apiRequest('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
-    }),
-    
-  approveAccess: (requestId: string, adminToken: string): Promise<{ message: string }> => 
-    apiRequest(`/auth/approve-access/${requestId}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${adminToken}`,
-      },
-    }),
-    
-  rejectAccess: (requestId: string, adminToken: string, reason?: string): Promise<{ message: string }> => 
-    apiRequest(`/auth/reject-access/${requestId}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${adminToken}`,
-      },
-      body: JSON.stringify({ reason }),
     }),
 };
 
