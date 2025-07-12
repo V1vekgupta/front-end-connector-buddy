@@ -10,6 +10,9 @@ import MenuPage from "./pages/MenuPage";
 import CartPage from "./pages/CartPage";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import OrderManagement from "./pages/OrderManagement";
+import DashboardLayout from "./components/DashboardLayout";
 import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,14 @@ const App = () => (
             <Route path="/menu/:restaurantId" element={<MenuPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+            
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="orders" element={<OrderManagement />} />
+              {/* Future routes for menu, analytics, settings, qr-codes */}
+            </Route>
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
