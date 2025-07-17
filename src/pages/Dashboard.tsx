@@ -1,165 +1,151 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   DollarSign, 
   ShoppingCart, 
-  TrendingUp, 
-  Clock,
-  Eye,
-  AlertCircle,
-  Clipboard,
-  Utensils,
-  QrCode
+  Users,
+  UtensilsCrossed,
+  ClipboardList,
+  QrCode,
+  MenuSquare
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { analyticsService, orderService } from '../services/api';
 
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const restaurantId = user.restaurantId || '1'; // Fallback for demo
+  const currentHour = new Date().getHours();
+  const greeting = currentHour < 12 ? 'Good Morning!' : currentHour < 17 ? 'Good Afternoon!' : 'Good Evening!';
 
-  // Mock data for now since we don't have the analytics endpoints yet
-  const todayStats = {
-    revenue: 1250.50,
-    orders: 23,
-    averageOrderValue: 54.37,
-    activeOrders: 5
+  // Mock data - will be replaced when backend is ready
+  const stats = {
+    totalSales: 62.96,
+    totalOrders: 1,
+    totalCustomers: 0,
+    totalMenuItems: 0
   };
 
-  const recentOrders = [
-    { id: '1', tableNumber: '5', total: 45.50, status: 'PREPARING', time: '5 min ago' },
-    { id: '2', tableNumber: '3', total: 78.25, status: 'READY', time: '8 min ago' },
-    { id: '3', tableNumber: '7', total: 32.00, status: 'PENDING', time: '12 min ago' },
+  const featuredItems = [
+    { name: 'Potato Pancakes', image: '/lovable-uploads/092bbb4a-c2cc-4829-a89d-a01b1ef038c8.png' },
+    { name: 'Plant Based Bacon', image: '/lovable-uploads/092bbb4a-c2cc-4829-a89d-a01b1ef038c8.png' },
+    { name: 'Iced Coffee', image: '/lovable-uploads/092bbb4a-c2cc-4829-a89d-a01b1ef038c8.png' },
+    { name: 'Plant Based Whopper', image: '/lovable-uploads/092bbb4a-c2cc-4829-a89d-a01b1ef038c8.png' }
   ];
 
   const popularItems = [
-    { name: 'Classic Burger', sold: 12, revenue: 180.00 },
-    { name: 'Margherita Pizza', sold: 8, revenue: 120.00 },
-    { name: 'Caesar Salad', sold: 6, revenue: 78.00 },
+    { name: 'Mojito', category: 'Beverages', price: 'AED2.00' },
+    { name: 'Baked Potato', category: 'Side Orders', price: 'AED1.50' },
+    { name: 'Homemade Mashed Potato', category: 'Side Orders', price: 'AED1.50' },
+    { name: 'Vegan Hum-Burger With Che...', category: 'Vegetarian & Plant Based Burgers', price: 'AED2.50' },
+    { name: 'French Fries', category: 'Side Orders', price: 'AED1.00' },
+    { name: 'Cappuccino', category: 'Beverages', price: 'AED1.50' }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'PREPARING': return 'bg-blue-100 text-blue-800';
-      case 'READY': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome back! Here's what's happening today.</p>
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
+        <h1 className="text-2xl font-bold">{greeting}</h1>
+        <p className="text-blue-100">{user.name || 'John Doe'}</p>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${todayStats.revenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">+12% from yesterday</p>
-          </CardContent>
-        </Card>
+      {/* Overview - Colorful Metric Cards */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Overview</h2>
+          <div className="text-sm text-gray-500">07/01/2025 - 07/31/2025</div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Total Sales - Pink */}
+          <Card className="bg-gradient-to-br from-pink-400 to-pink-500 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-pink-100 text-sm">Total Sales</p>
+                  <p className="text-2xl font-bold">AED{stats.totalSales}</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-pink-200" />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Orders Today</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayStats.orders}</div>
-            <p className="text-xs text-muted-foreground">+3 from yesterday</p>
-          </CardContent>
-        </Card>
+          {/* Total Orders - Blue */}
+          <Card className="bg-gradient-to-br from-blue-400 to-blue-500 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm">Total Orders</p>
+                  <p className="text-2xl font-bold">{stats.totalOrders}</p>
+                </div>
+                <ShoppingCart className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${todayStats.averageOrderValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">+8% from yesterday</p>
-          </CardContent>
-        </Card>
+          {/* Total Customers - Blue */}
+          <Card className="bg-gradient-to-br from-indigo-400 to-indigo-500 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-indigo-100 text-sm">Total Customers</p>
+                  <p className="text-2xl font-bold">{stats.totalCustomers}</p>
+                </div>
+                <Users className="h-8 w-8 text-indigo-200" />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Orders</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayStats.activeOrders}</div>
-            <Link to="/dashboard/orders">
-              <Button variant="link" className="p-0 text-xs">
-                View all orders →
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+          {/* Total Menu Items - Purple */}
+          <Card className="bg-gradient-to-br from-purple-400 to-purple-500 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm">Total Menu Items</p>
+                  <p className="text-2xl font-bold">{stats.totalMenuItems}</p>
+                </div>
+                <UtensilsCrossed className="h-8 w-8 text-purple-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
+        {/* Featured Items */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Orders</CardTitle>
-            <Link to="/dashboard/orders">
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                View All
-              </Button>
-            </Link>
+          <CardHeader>
+            <CardTitle>Featured Items</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {recentOrders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Table {order.tableNumber}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {featuredItems.map((item, index) => (
+                <div key={index} className="text-center space-y-2">
+                  <div className="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">No Image Found!</span>
                   </div>
-                  <p className="text-sm text-gray-600">{order.time}</p>
+                  <p className="text-sm font-medium">{item.name}</p>
                 </div>
-                <div className="text-right">
-                  <div className="font-medium">${order.total.toFixed(2)}</div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
 
-        {/* Popular Items */}
+        {/* Most Popular Items */}
         <Card>
           <CardHeader>
-            <CardTitle>Today's Popular Items</CardTitle>
+            <CardTitle>Most Popular Items</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {popularItems.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold">
-                    {index + 1}
-                  </div>
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg"></div>
                   <div>
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-gray-600">{item.sold} sold</div>
+                    <p className="font-medium text-sm">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.category}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-medium">${item.revenue.toFixed(2)}</div>
-                </div>
+                <p className="font-semibold text-sm">{item.price}</p>
               </div>
             ))}
           </CardContent>
@@ -173,24 +159,18 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link to="/dashboard/orders">
-              <Button className="w-full" variant="outline">
-                <Clipboard className="h-4 w-4 mr-2" />
-                Manage Orders
-              </Button>
-            </Link>
-            <Link to="/dashboard/menu">
-              <Button className="w-full" variant="outline">
-                <Utensils className="h-4 w-4 mr-2" />
-                Update Menu
-              </Button>
-            </Link>
-            <Link to="/dashboard/qr-codes">
-              <Button className="w-full" variant="outline">
-                <QrCode className="h-4 w-4 mr-2" />
-                Generate QR Code
-              </Button>
-            </Link>
+            <Button className="w-full h-16 flex flex-col items-center justify-center space-y-2" variant="outline">
+              <ClipboardList className="h-6 w-6" />
+              <span>Manage Orders</span>
+            </Button>
+            <Button className="w-full h-16 flex flex-col items-center justify-center space-y-2" variant="outline">
+              <MenuSquare className="h-6 w-6" />
+              <span>Update Menu</span>
+            </Button>
+            <Button className="w-full h-16 flex flex-col items-center justify-center space-y-2" variant="outline">
+              <QrCode className="h-6 w-6" />
+              <span>Generate QR Code</span>
+            </Button>
           </div>
         </CardContent>
       </Card>

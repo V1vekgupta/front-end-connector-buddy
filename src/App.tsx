@@ -12,6 +12,11 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import OrderManagement from "./pages/OrderManagement";
+import Kitchen from "./pages/Kitchen";
+import Tables from "./pages/Tables";
+import MenuManagement from "./pages/MenuManagement";
+import Analytics from "./pages/Analytics";
+import Customers from "./pages/Customers";
 import DashboardLayout from "./components/DashboardLayout";
 import { CartProvider } from "./context/CartContext";
 
@@ -34,8 +39,12 @@ const App = () => (
             {/* Dashboard Routes */}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
+              <Route path="kitchen" element={<Kitchen />} />
               <Route path="orders" element={<OrderManagement />} />
-              {/* Future routes for menu, analytics, settings, qr-codes */}
+              <Route path="tables" element={<Tables />} />
+              <Route path="menu" element={<MenuManagement />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="customers" element={<Customers />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

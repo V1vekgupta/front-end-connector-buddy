@@ -9,7 +9,8 @@ import {
   Settings, 
   QrCode,
   LogOut,
-  Menu
+  Menu,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -21,11 +22,12 @@ const DashboardLayout = () => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+    { name: 'Kitchen', href: '/dashboard/kitchen', icon: UtensilsCrossed },
     { name: 'Orders', href: '/dashboard/orders', icon: ClipboardList },
-    { name: 'Menu', href: '/dashboard/menu', icon: UtensilsCrossed },
-    { name: 'Analytics', href: '/dashboard/analytics', icon: TrendingUp },
-    { name: 'QR Codes', href: '/dashboard/qr-codes', icon: QrCode },
+    { name: 'Tables', href: '/dashboard/tables', icon: QrCode },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+    { name: 'Analytics', href: '/dashboard/analytics', icon: TrendingUp },
+    { name: 'Customers', href: '/dashboard/customers', icon: Users },
   ];
 
   const handleLogout = () => {
